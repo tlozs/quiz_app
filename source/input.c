@@ -10,31 +10,20 @@ const int allowed_extensions_size = sizeof(allowed_extensions) / sizeof(allowed_
 
 void read_all_input(int argc, char *argv[]) {
     int i;
-    char *input_string;
-    char *dot;
-    FILE *file;
-    DIR *folder;
 
     if (argc == 1) {
         printf("Error: no input files\n");
         /* return; */
     }
 
-    for (i = 1; i < argc; i++) {
-        input_string = argv[i];
-        dot = search_last_dot(input_string);
-        /* we try to read a file with the given name */
-        if (dot && extension_allowed(dot) && (file = find_file(input_string))) read_file(file);
-        /* if the file is not found, we try to read a folder with the same name */
-        else if ((folder = find_folder(input_string))) read_folder(folder);
-        else printf("Error: \'%s\' not found\n", input_string);
-    }
+    for (i = 1; i < argc; i++)
+        try_read_input(argv[i]);
 
     return;
 }
 
-char *search_last_dot(char *input_string) {
-    return strrchr(input_string, '.');
+char *search_last_dot(char *path_w_filename) {
+    return strrchr(path_w_filename, '.');
 }
 
 int extension_allowed(char *last_dot) {
@@ -45,21 +34,50 @@ int extension_allowed(char *last_dot) {
     return 0;
 }
 
-FILE *find_file(char *input_string) {
+void try_read_input(char *input) {
+    /* we try to read a file with the given name */
+    if (!try_read_file(input))
+    /* if the file is not found, we try to read a folder with the same name */
+        if (!try_read_folder(input))
+            printf("Error: could not read \'%s\'\n", input);
+    return;
+}
+
+int try_read_file(char *path_w_filename) {
+    char *dot = search_last_dot(path_w_filename);
+    FILE *file;
+    /* if the file has an extension and the extension is allowed and the file is found */
+    if (dot && extension_allowed(dot) && (file = find_file(path_w_filename))) {
+        read_file(file);
+        return 1;
+    }
+    return 0;
+}
+
+int try_read_folder(char *path_w_foldername) {
+    DIR *folder;
+    if ((folder = find_folder(path_w_foldername))) {
+        read_folder(folder, path_w_foldername);
+        return 1;
+    }
+    return 0;
+}
+
+FILE *find_file(char *path_w_filename) {
     FILE* file;
-    char *file_location = malloc(strlen(input_location) + strlen(input_string) + 1);
+    char *file_location = malloc(strlen(input_location) + strlen(path_w_filename) + 1);
     strcpy(file_location, input_location);
-    strcat(file_location, input_string);
+    strcat(file_location, path_w_filename);
     file = fopen(file_location, "r");
     free(file_location);
     return file;
 }
 
-DIR *find_folder(char *input_string) {
+DIR *find_folder(char *path_w_foldername) {
     DIR *folder;
-    char *folder_location = malloc(strlen(input_location) + strlen(input_string) + 1);
+    char *folder_location = malloc(strlen(input_location) + strlen(path_w_foldername) + 1);
     strcpy(folder_location, input_location);
-    strcat(folder_location, input_string);
+    strcat(folder_location, path_w_foldername);
     folder = opendir(folder_location);
     free(folder_location);
     return folder;
@@ -74,10 +92,33 @@ void read_file(FILE *file) {
     return;
 }
 
-void read_folder(DIR *folder) {
+void read_folder(DIR *folder, char *folder_path) {
     struct dirent *entry;
-    while ((entry = readdir(folder)))
-        printf("%s\n", entry->d_name);
+    char *folder_path_extended;
+    char *fname;
+
+    // we read all the files/foldersin the folder
+    while ((entry = readdir(folder))) {
+        fname = entry->d_name;
+
+        /* we need to skip the current and parent directories */
+        if (strcmp(fname, ".") == 0 || strcmp(fname, "..") == 0) continue;
+        
+        /* 
+        we search relative to the input location, 
+        so we need to add the folder name to the searched file, since we are in the folder
+        (instead of 'input/a.txt' we need to read 'input/<we_are_in_this_folder>/a.txt')
+         */
+        folder_path_extended = malloc(strlen(folder_path) + strlen(fname) + 2);
+        strcpy(folder_path_extended, folder_path);
+        strcat(folder_path_extended, "/");
+        strcat(folder_path_extended, fname);
+
+        /* try to read entry as a file, if it fails it should be a folder so we recursively search it further */
+        try_read_input(folder_path_extended);
+        
+        free(folder_path_extended);
+    }
     closedir(folder);
     return;
 }
