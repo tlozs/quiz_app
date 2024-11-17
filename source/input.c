@@ -97,7 +97,7 @@ void read_folder(DIR *folder, char *folder_path) {
     char *folder_path_extended;
     char *fname;
 
-    // we read all the files/foldersin the folder
+    /* we read all the files/foldersin the folder */
     while ((entry = readdir(folder))) {
         fname = entry->d_name;
 
