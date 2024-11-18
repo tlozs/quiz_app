@@ -10,14 +10,21 @@ const int allowed_extensions_size = sizeof(allowed_extensions) / sizeof(allowed_
 
 void read_all_input(int argc, char *argv[]) {
     int i;
+    char c;
 
     if (argc == 1) {
-        printf("Error: no input files\n");
-        /* return; */
+        printf("Warning: no input files specified in the command line\n");
+        printf("Would you like to read all files in the input folder? (y/n) ");
+        c = getchar();
+        if (c == 'y' || c == 'Y') {
+            try_read_input("");
+        }
+        else
+            printf("No input files read\n");
     }
-
-    for (i = 1; i < argc; i++)
-        try_read_input(argv[i]);
+    else
+        for (i = 1; i < argc; i++)
+            try_read_input(argv[i]);
 
     return;
 }
@@ -35,9 +42,7 @@ int extension_allowed(char *last_dot) {
 }
 
 void try_read_input(char *input) {
-    /* we try to read a file with the given name */
     if (!try_read_file(input))
-    /* if the file is not found, we try to read a folder with the same name */
         if (!try_read_folder(input))
             printf("Error: could not read \'%s\'\n", input);
     return;
@@ -46,7 +51,6 @@ void try_read_input(char *input) {
 int try_read_file(char *path_w_filename) {
     char *dot = search_last_dot(path_w_filename);
     FILE *file;
-    /* if the file has an extension and the extension is allowed and the file is found */
     if (dot && extension_allowed(dot) && (file = find_file(path_w_filename))) {
         read_file(file);
         return 1;
@@ -108,7 +112,7 @@ void read_folder(DIR *folder, char *folder_path) {
         we search relative to the input location, 
         so we need to add the folder name to the searched file, since we are in the folder
         (instead of 'input/a.txt' we need to read 'input/<we_are_in_this_folder>/a.txt')
-         */
+        */
         folder_path_extended = malloc(strlen(folder_path) + strlen(fname) + 2);
         strcpy(folder_path_extended, folder_path);
         strcat(folder_path_extended, "/");
