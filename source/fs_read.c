@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include "fs_read.h"
 #include "fs_utils.h"
+#include "comm.h"
 
 const char * const input_root = "input";
 const char * const allowed_extensions[] = {".txt", ".csv", ".tsv"};
@@ -11,56 +12,48 @@ const int allowed_extensions_size = sizeof(allowed_extensions) / sizeof(allowed_
 
 void read_all_input(int argc, char *argv[]) {
     int i;
-    char c;
 
-    if (no_input_root())
-    {
-        /* TODO: communication to separate functions */
-        printf("\033[1;31mError: input directory not found\033[0m\n");
-        printf("Would you like to create the input directory? (y/n) ");
-        c = getchar();
-        while (getchar() != '\n');
-        
-        /* TODO: what if no? */
-        if (c == 'y' || c == 'Y') {
-            if (create_input_root()) {
-                printf("Input directory created\n");
-                printf("\nPlace your input files in the input directory, then press any key to continue\n");
-                printf("(If there is no \033[1;35mANY\033[0m key on your keyboard, consult your local keyboard vendor) ");
-                while ((c = getchar()) != '\n');
-            }
-            else {
-                printf("\033[1;31mError: could not create input directory\033[0m\n");
-                /* TODO: I dont like return */
-                return;
-            }
+    if (no_input_root()) {
+        print_message(ERROR, "Input directory not found.");
+        print_message(QUESTION, "Would you like to create the input directory? (y/n) ");
+
+        if (getchar_equals('y') && create_input_root()) {
+            print_message(INFO, "Input directory created.");
+            print_message(INFO, "Place your input files in the input directory, then press any key to continue.");
+            print_message(QUESTION, "If there is no \033[1;35mANY\033[0m key on your keyboard, consult your local keyboard vendor...");
+            getchar_equals(0);
+        } else {
+            print_message(ERROR, "Could not create input directory.");
+            /* -TODO: I dont like return */
+            /* SOLUTION: silently skipping the next steps until return */
+            argc = 0;
         }
     }
 
     if (argc == 1) {
-        printf("\033[1;33mWarning: no input parameters specified in the command line\033[0m\n");
-        printf("Would you like to read all files in the input directory? (y/n) ");
-        c = getchar();
-        while (getchar() != '\n');
-        if (c == 'y' || c == 'Y')
+        print_message(WARNING, "No input parameters specified in the command line.");
+        print_message(QUESTION, "Would you like to read all files in the input directory? (y/n) ");
+        if (getchar_equals('y'))
             try_read_input(path_join(input_root, NULL));
         else
-            printf("\033[1;31mError: No input files read\033[0m\n");
-    }
-    else
-        for (i = 1; i < argc; i++)
+            print_message(ERROR, "No input files read.");
+    } else {
+        for (i = 1; i < argc; i++) {
             try_read_input(path_join(input_root, argv[i]));
+        }
+    }
 
     return;
 }
 
 void try_read_input(char *input_path) {
-    if (inside_input_root(input_path)) {
-        if (!try_read_file(input_path) && !try_read_folder(input_path))
-            printf("\033[1;31mError: could not read \'%s\'\033[0m\n", input_path);
+    if (!inside_input_root(input_path)) {
+        print_message(ERROR, "Input '%s' is not within the input directory.", input_path);
+    } else {
+        if (!try_read_file(input_path) && !try_read_folder(input_path)) {
+            print_message(ERROR, "Could not read input path: '%s'", input_path);
+        }
     }
-    else
-        printf("\033[1;31mError: input \'%s\' is not within the input directory\033[0m\n", input_path);
 
     free(input_path);
     return;

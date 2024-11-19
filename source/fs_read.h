@@ -29,7 +29,7 @@ void read_all_input(int argc, char *argv[]);
  * The input is searched relative to the defined input_location constant, 
  * and the input is considered valid if it is within the input_location directory.
  * 
- * @param input Path to the input file or folder
+ * @param input Path to the input file or folder, including the input_location
  */
 void try_read_input(char *input_path);
 
