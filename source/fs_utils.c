@@ -37,9 +37,8 @@ char *path_join(const char* const path, const char* const target) {
     if (target == NULL)
         target_path = strdup(path);
     else {
-        target_path = malloc(strlen(path) + strlen(target) + 3);
+        target_path = malloc(strlen(path) + strlen(target) + 2);
         sprintf(target_path, "%s\\%s", path, target);
-        /* printf("target_path: %s\n", target_path); TODO: check if +3 or +2 is needed */
     }
     return target_path;
 }
