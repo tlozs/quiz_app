@@ -15,9 +15,8 @@ int no_input_root() {
     return result;
 }
 
-void create_input_root() {
-    mkdir(input_root); /* TODO: use return value */
-    return;
+int create_input_root() {
+    return mkdir(input_root) == 0;
 }
 
 char *search_last_dot(const char *string) {

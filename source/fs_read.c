@@ -15,17 +15,25 @@ void read_all_input(int argc, char *argv[]) {
 
     if (no_input_root())
     {
+        /* TODO: communication to separate functions */
         printf("\033[1;31mError: input directory not found\033[0m\n");
         printf("Would you like to create the input directory? (y/n) ");
         c = getchar();
         while (getchar() != '\n');
         
+        /* TODO: what if no? */
         if (c == 'y' || c == 'Y') {
-            create_input_root();
-            printf("Input directory created\n");
-            printf("\nPlace your input files in the input directory, then press any key to continue\n");
-            printf("(If there is no \033[1;35mANY\033[0m key on your keyboard, consult your local keyboard vendor) ");
-            while ((c = getchar()) != '\n');
+            if (create_input_root()) {
+                printf("Input directory created\n");
+                printf("\nPlace your input files in the input directory, then press any key to continue\n");
+                printf("(If there is no \033[1;35mANY\033[0m key on your keyboard, consult your local keyboard vendor) ");
+                while ((c = getchar()) != '\n');
+            }
+            else {
+                printf("\033[1;31mError: could not create input directory\033[0m\n");
+                /* TODO: I dont like return */
+                return;
+            }
         }
     }
 

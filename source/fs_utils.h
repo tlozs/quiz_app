@@ -9,8 +9,10 @@ int no_input_root();
 
 /**
  * Creates a directory at the input location.
+ * 
+ * @return 1 if the directory is successfully created, 0 otherwise
  */
-void create_input_root();
+int create_input_root();
 
 /**
  * Searches for the last dot in the given string.
