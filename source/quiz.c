@@ -53,7 +53,14 @@ QAPair* parse_to_qa(const char *line) {
         print_message(FATAL, "Memory allocation failed.");
     strncpy(qa->question, line, tab - line);
     qa->question[tab - line] = '\0';
-    qa->answer = strdup(tab + 1); /* TODO: do not copy endline */
+
+    /* get rid of newline at the end:
+       no space for null terminator, the newline character will be replaced by it */
+    qa->answer = malloc(strlen(tab + 1));
+    if (qa->answer == NULL)
+        print_message(FATAL, "Memory allocation failed.");
+    qa->answer = strcpy(qa->answer, tab + 1);
+    qa->answer[strlen(tab + 1)-1] = '\0';
     return qa;
 }
 
@@ -62,7 +69,7 @@ void play_quiz() {
     int i;
     for (i = 0; i < quiz->size; i++) {
         printf("Question %d: %s\n", i + 1, quiz->qas[i]->question);
-        printf("Answer: %s\n", quiz->qas[i]->answer);
+        printf("Answer: %s\n\n", quiz->qas[i]->answer);
     }
     return;
 }
