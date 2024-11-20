@@ -29,6 +29,8 @@ void extend_quiz(QAPair *qa);
 
 /**
  * Frees all memory allocated for the quiz.
+ * 
+ * No need to check for NULL pointers, as the function will not crash if the quiz is empty.
  */
 void free_quiz();
 

@@ -29,7 +29,6 @@ void extend_quiz(QAPair *qa) {
     return;
 }
 
-/* TODO: what if freeing NULL */
 void free_quiz() {
     int i;
     for (i = 0; i < quiz->size; i++) {
@@ -64,9 +63,12 @@ QAPair* parse_to_qa(const char *line) {
     return qa;
 }
 
-/* TODO: warn empty quiz */
 void play_quiz() {
     int i;
+
+    if (quiz->size == 0)
+        print_message(FATAL, "Could not read any data from the specified inputs.");
+
     for (i = 0; i < quiz->size; i++) {
         printf("Question %d: %s\n", i + 1, quiz->qas[i]->question);
         printf("Answer: %s\n\n", quiz->qas[i]->answer);
