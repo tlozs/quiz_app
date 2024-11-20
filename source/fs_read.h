@@ -57,13 +57,15 @@ int try_read_file(const char *target_location);
  */
 int try_read_folder(const char *target_location);
 
-/* TODO: update later */
 /**
- * Reads the contents of a file and prints it to the standard output.
+ * Reads the contents of a file and registers the correctly formatted questions and answers.
+ * 
+ * The file is read line by line, and each non empty line is checked for correct formatting.
  * 
  * @param file Pointer to the file to be read
+ * @param file_path Path to the file
  */
-void read_file(FILE *file);
+void read_file(FILE *file, const char *file_path);
 
 /**
  * Reads all the contents of a folder and recursively reads all files and folders within it.

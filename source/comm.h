@@ -4,11 +4,14 @@ typedef enum {
     INFO,
     QUESTION,
     WARNING,
-    ERROR
+    ERROR,
+    FATAL
 } message_type;
 
 /**
- * Prints a message to the console.
+ * Prints a prefixed and colored message to the console.
+ * 
+ * If the message type is FATAL, the program will exit after printing the message.
  * 
  * @param type The type of message to print
  * @param message The message to print

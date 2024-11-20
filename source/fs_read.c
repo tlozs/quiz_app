@@ -5,6 +5,9 @@
 #include "fs_read.h"
 #include "fs_utils.h"
 #include "comm.h"
+#include "quiz.h"
+
+#define LINE_MAX 1024
 
 const char * const input_root = "input";
 const char * const allowed_extensions[] = {".txt", ".csv", ".tsv"};
@@ -23,10 +26,7 @@ void read_all_input(int argc, char *argv[]) {
             print_message(QUESTION, "If there is no \033[1;35mANY\033[0m key on your keyboard, consult your local keyboard vendor...");
             getchar_equals(0);
         } else {
-            print_message(ERROR, "Could not create input directory.");
-            /* -TODO: I dont like return */
-            /* SOLUTION: silently skipping the next steps until return */
-            argc = 0;
+            print_message(FATAL, "Could not create input directory.");
         }
     }
 
@@ -35,13 +35,10 @@ void read_all_input(int argc, char *argv[]) {
         print_message(QUESTION, "Would you like to read all files in the input directory? (y/n) ");
         if (getchar_equals('y'))
             try_read_input(path_join(input_root, NULL));
-        else
-            print_message(ERROR, "No input files read.");
-    } else {
-        for (i = 1; i < argc; i++) {
-            try_read_input(path_join(input_root, argv[i]));
-        }
     }
+    else
+        for (i = 1; i < argc; i++)
+            try_read_input(path_join(input_root, argv[i]));
 
     return;
 }
@@ -63,7 +60,7 @@ int try_read_file(const char *target_location) {
     char *dot = search_last_dot(target_location);
     FILE *file;
     if (dot && extension_allowed(dot) && (file = fopen(target_location, "r"))) {
-        read_file(file);
+        read_file(file, target_location);
         fclose(file);
         return 1;
     }
@@ -80,11 +77,21 @@ int try_read_folder(const char *target_location) {
     return 0;
 }
 
-void read_file(FILE *file) {
-    char c;
-    while ((c = fgetc(file)) != EOF)
-        putchar(c);
-    printf("\n");
+void read_file(FILE *file, const char *file_path) {
+    char line[LINE_MAX];
+    unsigned int line_number = 0;
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        line_number++;
+        if (strlen(line)) {
+            if (format_correct(line))
+                extend_quiz(parse_to_qa(line));
+            else
+                print_message(WARNING, "Unable to parse line %d of '%s': incorrect format.", line_number, file_path);
+        }
+    }
+
+    fclose(file);
     return;
 }
 

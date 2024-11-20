@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
-#include "comm.h"
 #include <stdarg.h>
+#include "comm.h"
+#include "quiz.h"
 
 void print_message(message_type type, const char *message, ...) {
     char *color_code;
@@ -22,12 +24,21 @@ void print_message(message_type type, const char *message, ...) {
             color_code = "\033[1;31m";
             prefix = "Error: ";
             break;
+        case FATAL:
+            color_code = "\033[1;35m"; /* TODO: check colors */
+            prefix = "Fatal error: ";
+            break;
     }
     printf("%s%s", color_code, prefix);
     vprintf(message, args);
     printf("\033[0m");
     printf(type == QUESTION ? "" : "\n");
     va_end(args);
+    if (type == FATAL) {
+        free_quiz();
+        exit(1);
+    }
+    return;
 }
 
 int getchar_equals(char c) {

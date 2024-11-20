@@ -4,12 +4,16 @@
 #include "evaluation.h"
 
 int main(int argc, char *argv[]) {
+
+    init_quiz();
     
     read_all_input(argc, argv);
 
     play_quiz();
 
     evaluate_quiz();
+
+    free_quiz();
 
     return 0;
 }

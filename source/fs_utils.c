@@ -5,6 +5,11 @@
 #include <limits.h>
 #include "fs_read.h"
 #include "fs_utils.h"
+#include "comm.h"
+
+int format_correct(const char *line) {
+    return exactly_one_tab(line);
+}
 
 int no_input_root() {
     /* TODO: try_read_folder? */
@@ -23,6 +28,12 @@ char *search_last_dot(const char *string) {
     return strrchr(string, '.');
 }
 
+int exactly_one_tab(const char *line) {
+    char *first_tab = strchr(line, '\t');
+    char *last_tab = strrchr(line, '\t');
+    return first_tab != NULL && first_tab == last_tab;
+}
+
 int extension_allowed(const char *extension) {
     int i;
     for (i = 0; i < allowed_extensions_size; i++)
@@ -37,6 +48,9 @@ char *path_join(const char* const path, const char* const target) {
         target_path = strdup(path);
     else {
         target_path = malloc(strlen(path) + strlen(target) + 2);
+        if (target_path == NULL)
+            print_message(FATAL, "Memory allocation failed.");
+
         sprintf(target_path, "%s\\%s", path, target);
     }
     return target_path;
