@@ -25,7 +25,7 @@ void print_message(message_type type, const char *message, ...) {
             prefix = "Error: ";
             break;
         case FATAL:
-            color_code = "\033[1;35m"; /* TODO: check colors */
+            color_code = "\033[1;31m";
             prefix = "Fatal error: ";
             break;
     }
