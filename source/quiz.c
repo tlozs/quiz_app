@@ -51,28 +51,42 @@ void free_quiz() {
 
 QAPair* parse_to_qa(const char *line) {
     char *tab = strchr(line, '\t');
-    int newline_offset = 0;
     QAPair *qa = malloc(sizeof(QAPair));
+    
     if (qa == NULL)
         print_message(FATAL, "Memory allocation failed.");
     
+    parse_question(qa, line, tab);
+    parse_answer(qa, tab);
+    
+    return qa;
+}
+
+
+void parse_question(QAPair *qa, const char *line, char *tab) {
     qa->question = malloc(tab - line + 1);
     if (qa->question == NULL)
         print_message(FATAL, "Memory allocation failed.");
+    
+    /* since source is longer, no null terminator is copied, so we add it manually */
     strncpy(qa->question, line, tab - line);
     qa->question[tab - line] = '\0';
 
-    /*  If the last character is not a newline, we need to allocate space for the null terminator
-    Otherwise, we will overwrite the newline character with the null terminator */
-    if (line[strlen(line) - 1] != '\n')
-        newline_offset = 1;
-    /* TODO: strcspn? */
-    qa->answer = malloc(strlen(tab + 1) + newline_offset);
+    return;
+}
+
+void parse_answer(QAPair *qa, char *tab) {
+    /* Remove newline character if present (from the end of the line)*/
+    tab[strcspn(tab, "\n")] = '\0';
+
+    qa->answer = malloc(strlen(tab + 1) + 1);
     if (qa->answer == NULL)
         print_message(FATAL, "Memory allocation failed.");
+    
+    /* This copies the null terminator as well */
     strcpy(qa->answer, tab + 1);
-    qa->answer[strlen(tab + 1) - 1 + newline_offset] = '\0';
-    return qa;
+    
+    return;
 }
 
 QAPair *random_question(int range, int *out_index) {
