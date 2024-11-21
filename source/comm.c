@@ -10,46 +10,63 @@ void welcome_toast(int count) {
     print_message(INFO, "\nWelcome to the quiz!");
     print_message(INFO, "You will be asked %d questions in random order.", count);
     print_message(INFO, "Your job is to type your answer and then press Enter.");
-    print_message(INFO, "If you get the answer wrong, the correct answer will be shown.");
-    print_message(INFO, "Good luck!");
+    print_message(INFO, "If you get the answer wrong, the correct answer will be shown.\n");
 
     return;
 }
 
 void gamemode_select() {
-    int characters_skipped;
-    int answer;
-    print_message(INFO, "Select the game mode:");
-    print_message(INFO, "1. One Rounder (Every question is asked once)");
-    print_message(INFO, "2. One Rounder Reversed (Answers are questions, and vice versa)");
-    print_message(INFO, "3. Infinite (Questions are asked until you quit)");
-    print_message(INFO, "4. Infinite Reversed (Answers are questions, and vice versa)");
+    int answer_correct = 0;
 
-    /* Force switch to the default case if multiple characters are entered */
-    answer = get_one_char(&characters_skipped);
-    if (characters_skipped)
-        answer = 0;
+    while (!answer_correct)
+    {
+        print_message(INFO, "Select the game mode:");
+        print_message(INFO, "  1. One Rounder (Every question is asked once)");
+        print_message(INFO, "  2. One Rounder Reversed (Answers are questions, and vice versa)");
+        print_message(INFO, "  3. Infinite (Questions are asked until you quit)");
+        print_message(INFO, "  4. Infinite Reversed (Answers are questions, and vice versa)");
 
-    switch (answer) {
-        case '1':
-            gamemode = ONEROUNDER;
+        answer_correct = 1;
+
+        switch (getch()) {
+            case '1':
+                gamemode = ONEROUNDER;
+                break;
+            case '2':
+                gamemode = ONEROUNDER_REVERSED;
+                break;
+            case '3':
+                gamemode = INFINITE;
+                break;
+            case '4':
+                gamemode = INFINITE_REVERSED;
+                break;
+            default:
+                clear_screen();
+                print_message(ERROR, "Invalid game mode selected.");
+                welcome_toast(quiz->size);
+                answer_correct = 0;
+                break;
+        }
+    }
+    
+    printf("Selected game mode: ");
+    switch (gamemode)
+    {
+        case ONEROUNDER:
+            print_message(INFO, "One Rounder");
             break;
-        case '2':
-            gamemode = ONEROUNDER_REVERSED;
+        case ONEROUNDER_REVERSED:
+            print_message(INFO, "One Rounder Reversed");
             break;
-        case '3':
-            gamemode = INFINITE;
+        case INFINITE:
+            print_message(INFO, "Infinite");
             break;
-        case '4':
-            gamemode = INFINITE_REVERSED;
-            break;
-        default:
-            clear_screen();
-            print_message(ERROR, "Invalid game mode selected.");
-            welcome_toast(quiz->size);
-            gamemode_select();
+        case INFINITE_REVERSED:
+            print_message(INFO, "Infinite Reversed");
             break;
     }
+
 
     return;
 }
@@ -101,16 +118,6 @@ void print_message(message_type type, const char *message, ...) {
     return;
 }
 
-int get_one_char(int *out_skipped) {
-    int input = tolower(getchar());
-    if (out_skipped) *out_skipped = 0;
-
-    while (!(input == '\n' || getchar() == '\n'))
-        if (out_skipped) (*out_skipped)++;
-
-    return input;
-}
-
 int getchar_equals(char c) {
     char input = 0;
 
@@ -118,8 +125,10 @@ int getchar_equals(char c) {
         getch();
         printf("\n");
     }
-    else
-        input = get_one_char(NULL);
+    else {
+        input = tolower(getchar());
+        while (!(input == '\n' || getchar() == '\n'));
+    }
     
     return input == c;
 }
