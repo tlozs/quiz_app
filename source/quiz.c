@@ -139,6 +139,10 @@ void play_quiz() {
         QAPair *qa = random_question(range, &current);
         exit = ask_and_correct_question(qa);
         swap_qas(current, --range);
+
+        /* If we are out of questions, we reset the range in INFINITE mode */
+        if ((gamemode == INFINITE || gamemode == INFINITE_REVERSED) && range == 0)
+            range = quiz->size;            
     }
     
     stop_timer();

@@ -6,11 +6,13 @@
 #define ANSWER_SIZE 256
 
 time_t start, end, elapsed;
-int correct_answers = 0; /* TODO: count asked questions */
+int correct_answers = 0, asked_questions = 0;
 
 int ask_and_correct_question(QAPair *qa) {
     char answer[ANSWER_SIZE];
     int exit = 0;
+
+    asked_questions++;
 
     print_message(INFO, "%s ", qa->question);
     fgets(answer, sizeof(answer), stdin);
@@ -18,9 +20,8 @@ int ask_and_correct_question(QAPair *qa) {
     /* Remove newline character if present */
     answer[strcspn(answer, "\n")] = '\0';
 
-    if (strcmp(answer, "!exit") == 0) {
+    if (strcmp(answer, "!exit") == 0)
         exit = 1;
-    }
     else if (strcmp(answer, qa->answer) == 0)
         correct_answers++;
     else
@@ -45,9 +46,9 @@ void stop_timer() {
 }
 
 void evaluate_quiz() {
-    double percentage = (double)correct_answers / quiz->size * 100;
+    double percentage = (double)correct_answers / asked_questions * 100;
 
     print_message(INFO, "Quiz completed in %ld seconds.", elapsed);
-    print_message(INFO, "You got %d out of %d questions correct.", correct_answers, quiz->size);
+    print_message(INFO, "You got %d out of %d questions correct.", correct_answers, asked_questions);
     print_message(INFO, "That's %.2f%%!", percentage);
 }
