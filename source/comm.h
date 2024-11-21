@@ -12,7 +12,7 @@ typedef enum message_type {
 /**
  * Prints a welcome message to the console.
  */
-void welcome_toast();
+void welcome_toast(int count);
 
 /**
  * Prints a prefixed and colored message to the console.
