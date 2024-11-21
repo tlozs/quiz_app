@@ -25,6 +25,7 @@ void start_timer();
 void stop_timer();
 
 /**
- * Evaluates the quiz.
+ * Prints the time taken, the amount of correct answers, 
+ * the amount of asked questions and the percentage of correct answers.
  */
 void evaluate_quiz();
