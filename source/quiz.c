@@ -6,6 +6,7 @@
 #include "evaluation.h"
 
 Quiz *quiz;
+GameMode gamemode;
 
 void init_quiz() {
     quiz = malloc(sizeof(Quiz));
@@ -118,8 +119,11 @@ void play_quiz() {
     int range = quiz->size;
     if (range == 0)
         print_message(FATAL, "Could not read any data from the specified inputs.");
-    /* TODO: gamemodes */
+    
     welcome_toast(range);
+
+    gamemode_select();
+
     print_message(QUESTION, "Press any key to start the quiz...");
     getchar_equals(0);
 

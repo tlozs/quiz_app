@@ -8,10 +8,39 @@
 
 void welcome_toast(int count) {
     print_message(INFO, "\nWelcome to the quiz!");
-    print_message(INFO, "You will be asked %d questions.", count);
+    print_message(INFO, "You will be asked %d questions in random order.", count);
     print_message(INFO, "Your job is to type your answer and then press Enter.");
     print_message(INFO, "If you get the answer wrong, the correct answer will be shown.");
     print_message(INFO, "Good luck!");
+
+    return;
+}
+
+void gamemode_select() {
+    print_message(INFO, "Select the game mode:");
+    print_message(INFO, "1. One Rounder (Every question is asked once)");
+    print_message(INFO, "2. One Rounder Reversed (Answers are questions, and vice versa)");
+    print_message(INFO, "3. Infinite (Questions are asked until you quit)");
+    print_message(INFO, "4. Infinite Reversed (Answers are questions, and vice versa)");
+
+    switch (getchar()) {
+        case '1':
+            gamemode = ONEROUNDER;
+            break;
+        case '2':
+            gamemode = ONEROUNDER_REVERSED;
+            break;
+        case '3':
+            gamemode = INFINITE;
+            break;
+        case '4':
+            gamemode = INFINITE_REVERSED;
+            break;
+        default:
+            print_message(ERROR, "Invalid game mode selected.");
+            gamemode_select();
+            break;
+    }
 
     return;
 }

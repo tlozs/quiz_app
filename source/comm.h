@@ -15,6 +15,12 @@ typedef enum message_type {
 void welcome_toast(int count);
 
 /**
+ * Prints a message to the console, asking the user to select a game mode
+ * and sets the global variable accordingly.
+ */
+void gamemode_select();
+
+/**
  * Prints a prefixed and colored message to the console.
  * 
  * If the message type is FATAL, the program will exit after printing the message.

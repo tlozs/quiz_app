@@ -11,7 +11,15 @@ typedef struct Quiz {
     int capacity;
 } Quiz;
 
+typedef enum GameMode {
+    INFINITE,
+    INFINITE_REVERSED,
+    ONEROUNDER,
+    ONEROUNDER_REVERSED
+} GameMode;
+
 extern Quiz *quiz;
+extern GameMode gamemode;
 
 /**
  * Initializes the quiz with an empty question-answer pair array and an initial capacity.
