@@ -22,6 +22,6 @@ void start_timer();
 void stop_timer();
 
 /**
- * Evaluates the quiz. //TODO: time
+ * Evaluates the quiz.
  */
 void evaluate_quiz();
