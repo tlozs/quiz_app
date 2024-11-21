@@ -12,38 +12,49 @@ void init_quiz() {
     quiz = malloc(sizeof(Quiz));
     if (quiz == NULL)
         print_message(FATAL, "Memory allocation failed.");
+
     quiz->size = 0;
     quiz->capacity = 16;
+
     quiz->qas = malloc(quiz->capacity * sizeof(QAPair*));
     if(quiz->qas == NULL)
         print_message(FATAL, "Memory allocation failed.");
+
     return;
 }
 
 void extend_quiz(QAPair *qa) {
     if (quiz->size == quiz->capacity) {
         quiz->capacity *= 2;
+        
         quiz->qas = realloc(quiz->qas, quiz->capacity * sizeof(QAPair*));
         if(quiz->qas == NULL)
             print_message(FATAL, "Memory allocation failed.");
     }
+
     quiz->qas[quiz->size++] = qa;
+
     return;
 }
 
 void shrink_quiz_size() {
     quiz->capacity = quiz->size;
     quiz->qas = realloc(quiz->qas, quiz->capacity * sizeof(QAPair*));
+    if(quiz->qas == NULL)
+        print_message(FATAL, "Memory allocation failed.");
+
     return;
 }
 
 void free_quiz() {
     int i;
+    
     for (i = 0; i < quiz->size; i++) {
         free(quiz->qas[i]->question);
         free(quiz->qas[i]->answer);
         free(quiz->qas[i]);
     }
+
     free(quiz->qas);
     free(quiz);
     return;
@@ -91,6 +102,7 @@ void parse_answer(QAPair *qa, char *tab) {
 
 QAPair *random_question(int range, int *out_index) {
     *out_index = rand() % range;
+
     return quiz->qas[*out_index];
 }
 
@@ -115,24 +127,24 @@ void swap_qas(int i, int j) {
     QAPair *temp = quiz->qas[i];
     quiz->qas[i] = quiz->qas[j];
     quiz->qas[j] = temp;
+
     return;
 }
 
 void play_quiz() {
     int current;
     int range = quiz->size;
-    if (quiz->size == 0)
+    if (range == 0)
         print_message(FATAL, "Could not read any data from the specified inputs.");
-
 
     welcome_toast(range);
     print_message(QUESTION, "Press any key to start the quiz...");
     getchar_equals(0);
 
-    /* get rid of potential error messages */
+    /* clear any previous error messages */
     clear_screen();
-
     welcome_toast(range);
+
 /* TODO: count elapsed time */
 
     while (range) {

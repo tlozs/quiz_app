@@ -12,6 +12,7 @@ void welcome_toast(int count) {
     print_message(INFO, "Your job is to type your answer and then press Enter.");
     print_message(INFO, "If you get the answer wrong, the correct answer will be shown.");
     print_message(INFO, "Good luck!");
+
     return;
 }
 
@@ -19,7 +20,9 @@ void print_message(message_type type, const char *message, ...) {
     char *color_code;
     char *prefix = "";
     va_list args;
+
     va_start(args, message);
+    
     switch (type) {
         case INFO:
         case QUESTION:
@@ -43,31 +46,36 @@ void print_message(message_type type, const char *message, ...) {
             prefix = "Fatal error: ";
             break;
     }
+    
     printf("%s%s", color_code, prefix);
     vprintf(message, args);
-    printf("\033[0m");
-    printf(type == QUESTION ? "" : "\n");
     va_end(args);
+    printf("\033[0m");
+
+    printf(type == QUESTION ? "" : "\n");
+
     if (type == FATAL) {
         printf("\n");
         free_quiz();
         exit(1);
     }
+
     return;
 }
 
 int getchar_equals(char c) {
-    char input;
+    char input = 0;
+
     if (c == 0)  {
         getch();
         printf("\n");
-        return 1;
     }
     else {
         input = tolower(getchar());
         while (!(input == '\n' || getchar() == '\n'));
-        return input == c;
     }
+    
+    return input == c;
 }
 
 void clear_screen() {
@@ -76,5 +84,6 @@ void clear_screen() {
     #else
         system("clear");
     #endif
+    
     return;
 }

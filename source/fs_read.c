@@ -25,7 +25,8 @@ void read_all_input(int argc, char *argv[]) {
             print_message(INFO, "Place your input files in the input directory, then press any key to continue.");
             print_message(QUESTION, "If there is no \033[1;35mANY\033[0m key on your keyboard, consult your local keyboard vendor...");
             getchar_equals(0);
-        } else {
+        } 
+        else {
             print_message(FATAL, "Could not create input directory.");
         }
         print_message(INFO, "");
@@ -47,10 +48,9 @@ void read_all_input(int argc, char *argv[]) {
 void try_read_input(char *input_path) {
     if (!inside_input_root(input_path)) {
         print_message(ERROR, "Input '%s' is not within the input directory.", input_path);
-    } else {
-        if (!try_read_file(input_path) && !try_read_folder(input_path)) {
-            print_message(ERROR, "Could not read input path: '%s'", input_path);
-        }
+    }
+    else if (!try_read_file(input_path) && !try_read_folder(input_path)) {
+        print_message(ERROR, "Could not read input path: '%s'", input_path);
     }
 
     free(input_path);
@@ -60,21 +60,25 @@ void try_read_input(char *input_path) {
 int try_read_file(const char *target_location) {
     char *dot = search_last_dot(target_location);
     FILE *file;
+
     if (dot && extension_allowed(dot) && (file = fopen(target_location, "r"))) {
         read_file(file, target_location);
         fclose(file);
         return 1;
     }
+
     return 0;
 }
 
 int try_read_folder(const char *target_location) {
     DIR *folder = opendir(target_location);
+
     if (folder) {
         read_folder(folder, target_location);
         closedir(folder);
         return 1;
     }
+    
     return 0;
 }
 
@@ -84,7 +88,9 @@ void read_file(FILE *file, const char *file_path) {
 
     while (fgets(line, sizeof(line), file) != NULL) {
         line_number++;
-        if (strlen(line)) {
+        
+        /* Check if the line is not just a newline character */
+        if (1 < strlen(line)) {
             if (format_correct(line))
                 extend_quiz(parse_to_qa(line));
             else
@@ -103,10 +109,12 @@ void read_folder(DIR *folder, const char *folder_path) {
 
     while ((entry = readdir(folder))) {
         fname = entry->d_name;
+
         if (!(strcmp(fname, ".") == 0 || strcmp(fname, "..") == 0)) {
             folder_path_extended = path_join(folder_path, fname);
             try_read_input(folder_path_extended);
         }
     }
+
     return;
 }

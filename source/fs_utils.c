@@ -15,8 +15,10 @@ int no_input_root() {
     /* TODO: try_read_folder? */
     DIR* input_dir = opendir(input_root);
     int result = input_dir == NULL;
+
     if (input_dir)
         closedir(input_dir);
+
     return result;
 }
 
@@ -31,19 +33,23 @@ char *search_last_dot(const char *string) {
 int exactly_one_tab(const char *line) {
     char *first_tab = strchr(line, '\t');
     char *last_tab = strrchr(line, '\t');
+
     return first_tab != NULL && first_tab == last_tab;
 }
 
 int extension_allowed(const char *extension) {
     int i;
+
     for (i = 0; i < allowed_extensions_size; i++)
         if (strcmp(extension, allowed_extensions[i]) == 0)
             return 1;
+
     return 0;
 }
 
 char *path_join(const char* const path, const char* const target) {
     char *target_path;
+
     if (target == NULL)
         target_path = strdup(path);
     else {
@@ -53,6 +59,7 @@ char *path_join(const char* const path, const char* const target) {
 
         sprintf(target_path, "%s\\%s", path, target);
     }
+    
     return target_path;
 }
 
