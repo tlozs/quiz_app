@@ -10,7 +10,7 @@
 #define LINE_MAX 1024
 
 const char * const input_root = "input";
-const char * const allowed_extensions[] = {".txt", ".csv", ".tsv"};
+const char * const allowed_extensions[] = {".txt", ".tsv"};
 const int allowed_extensions_size = sizeof(allowed_extensions) / sizeof(allowed_extensions[0]);
 
 void read_all_input(int argc, char *argv[]) {
