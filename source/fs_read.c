@@ -16,7 +16,7 @@ const int allowed_extensions_size = sizeof(allowed_extensions) / sizeof(allowed_
 void read_all_input(int argc, char *argv[]) {
     int i;
 
-    if (no_input_root()) { /* TODO: newline for better grouping */
+    if (no_input_root()) {
         print_message(ERROR, "Input directory not found.");
         print_message(QUESTION, "Would you like to create the input directory? (y/n) ");
 
@@ -28,6 +28,7 @@ void read_all_input(int argc, char *argv[]) {
         } else {
             print_message(FATAL, "Could not create input directory.");
         }
+        print_message(INFO, "");
     }
 
     if (argc == 1) {
@@ -87,7 +88,7 @@ void read_file(FILE *file, const char *file_path) {
             if (format_correct(line))
                 extend_quiz(parse_to_qa(line));
             else
-                print_message(WARNING, "Unable to parse line %d of '%s': incorrect format.", line_number, file_path);
+                print_message(WARNING, "Unable to parse line %d of '%s': Incorrect format.", line_number, file_path);
         }
     }
 

@@ -49,6 +49,7 @@ void print_message(message_type type, const char *message, ...) {
     printf(type == QUESTION ? "" : "\n");
     va_end(args);
     if (type == FATAL) {
+        printf("\n");
         free_quiz();
         exit(1);
     }
