@@ -123,11 +123,11 @@ void play_quiz() {
     print_message(QUESTION, "Press any key to start the quiz...");
     getchar_equals(0);
 
+    start_timer();
+
     /* clear any previous error messages */
     clear_screen();
     welcome_toast(range);
-
-/* TODO: count elapsed time */
 
     while (range) {
         QAPair *qa = random_question(range, &current);
@@ -135,6 +135,8 @@ void play_quiz() {
         swap_qas(current, --range);
     }
     
+    stop_timer();
+
     return;
 }
 

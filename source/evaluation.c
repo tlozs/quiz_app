@@ -5,6 +5,8 @@
 
 #define ANSWER_SIZE 256
 
+time_t start, end, elapsed;
+
 void ask_and_correct_question(QAPair *qa) {
     char answer[ANSWER_SIZE];
 
@@ -20,6 +22,19 @@ void ask_and_correct_question(QAPair *qa) {
     return;
 }
 
+void start_timer() {
+    start = time(NULL);
+
+    return;
+}
+
+void stop_timer() {
+    end = time(NULL);
+    elapsed = end - start;
+
+    return;
+}
+
 void evaluate_quiz() {
-    printf("Evaluating quiz...\n");
+    print_message(INFO, "\nQuiz completed in %ld seconds.", elapsed);
 }

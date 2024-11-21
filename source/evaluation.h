@@ -1,5 +1,8 @@
 #pragma once
+#include <time.h>
 #include "quiz.h"
+
+extern time_t start, end, elapsed;
 
 /**
  * Asks a question and corrects the user if the answer is wrong.
@@ -8,4 +11,17 @@
  */
 void ask_and_correct_question(QAPair *qa);
 
+/**
+ * Starts the timer.
+ */
+void start_timer();
+
+/**
+ * Stops the timer and calculates the elapsed time.
+ */
+void stop_timer();
+
+/**
+ * Evaluates the quiz. //TODO: time
+ */
 void evaluate_quiz();
