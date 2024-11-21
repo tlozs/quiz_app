@@ -38,10 +38,12 @@ void extend_quiz(QAPair *qa) {
 }
 
 void shrink_quiz_size() {
-    quiz->capacity = quiz->size;
-    quiz->qas = realloc(quiz->qas, quiz->capacity * sizeof(QAPair*));
-    if(quiz->qas == NULL)
-        print_message(FATAL, "Memory allocation failed.");
+    if (quiz->size) {
+        quiz->capacity = quiz->size;
+        quiz->qas = realloc(quiz->qas, quiz->capacity * sizeof(QAPair*));
+        if(quiz->qas == NULL)
+            print_message(FATAL, "Memory allocation failed.");
+    }
 
     return;
 }
