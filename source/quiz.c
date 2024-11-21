@@ -48,8 +48,9 @@ void free_quiz() {
 }
 
 QAPair* parse_to_qa(const char *line) {
-    QAPair *qa = malloc(sizeof(QAPair));
     char *tab = strchr(line, '\t');
+    int newline_offset = 0;
+    QAPair *qa = malloc(sizeof(QAPair));
     if (qa == NULL)
         print_message(FATAL, "Memory allocation failed.");
     
@@ -59,14 +60,16 @@ QAPair* parse_to_qa(const char *line) {
     strncpy(qa->question, line, tab - line);
     qa->question[tab - line] = '\0';
 
-    /* get rid of newline at the end:
-       no space for null terminator, the newline character will be replaced by it */
-       /* TODO: check and only swap if there is newline */
-    qa->answer = malloc(strlen(tab + 1));
+    /*  If the last character is not a newline, we need to allocate space for the null terminator
+    Otherwise, we will overwrite the newline character with the null terminator */
+    if (line[strlen(line) - 1] != '\n')
+        newline_offset = 1;
+    
+    qa->answer = malloc(strlen(tab + 1) + newline_offset);
     if (qa->answer == NULL)
         print_message(FATAL, "Memory allocation failed.");
-    qa->answer = strcpy(qa->answer, tab + 1);
-    qa->answer[strlen(tab + 1)-1] = '\0';
+    strcpy(qa->answer, tab + 1);
+    qa->answer[strlen(tab + 1) - 1 + newline_offset] = '\0';
     return qa;
 }
 
