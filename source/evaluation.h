@@ -7,9 +7,12 @@ extern time_t start, end, elapsed;
 /**
  * Asks a question and corrects the user if the answer is wrong.
  * 
+ * If the user types "!exit", the function will return 1, indicating that the user wants to exit.
+ * 
  * @param qa Pointer to the question-answer pair
+ * @return 1 if the user wants to exit, 0 otherwise
  */
-void ask_and_correct_question(QAPair *qa);
+int ask_and_correct_question(QAPair *qa);
 
 /**
  * Starts the timer.

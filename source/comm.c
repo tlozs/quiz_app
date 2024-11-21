@@ -23,7 +23,7 @@ void gamemode_select() {
     print_message(INFO, "3. Infinite (Questions are asked until you quit)");
     print_message(INFO, "4. Infinite Reversed (Answers are questions, and vice versa)");
 
-    switch (getchar()) {
+    switch (getchar()) { /* TODO: getchar skipping, getchar_equals portability */
         case '1':
             gamemode = ONEROUNDER;
             break;

@@ -64,7 +64,7 @@ int try_read_file(const char *target_location) {
     if (dot && extension_allowed(dot) && (file = fopen(target_location, "r"))) {
         read_file(file, target_location);
         fclose(file);
-        return 1;
+        return 1; /* TODO: to variable */
     }
 
     return 0;

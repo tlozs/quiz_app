@@ -116,6 +116,7 @@ void swap_qas(int i, int j) {
 
 void play_quiz() {
     int current;
+    int exit = 0;
     int range = quiz->size;
     if (range == 0)
         print_message(FATAL, "Could not read any data from the specified inputs.");
@@ -134,9 +135,9 @@ void play_quiz() {
 
     start_timer();
 
-    while (range) {
+    while (range && !exit) {
         QAPair *qa = random_question(range, &current);
-        ask_and_correct_question(qa);
+        exit = ask_and_correct_question(qa);
         swap_qas(current, --range);
     }
     
