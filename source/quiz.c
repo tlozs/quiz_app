@@ -133,7 +133,7 @@ void play_quiz() {
     /* clear any previous error messages */
     clear_screen();
     welcome_toast(range);
-    print_message(INFO, "\n--------------------------------------------------------------\n");
+    print_message(INFO, "--------------------------------------------------------------------\n");
 
     start_timer();
 
@@ -149,7 +149,7 @@ void play_quiz() {
     
     stop_timer();
 
-    print_message(INFO, "--------------------------------------------------------------\n");
+    print_message(INFO, "--------------------------------------------------------------------\n");
 
     return;
 }

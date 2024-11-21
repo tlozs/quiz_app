@@ -8,9 +8,11 @@
 
 void welcome_toast(int count) {
     print_message(INFO, "\nWelcome to the quiz!");
-    print_message(INFO, "You will be asked %d questions in random order.", count);
+    print_message(INFO, "You will need to answer a pool of %d questions asked in random order.", count);
     print_message(INFO, "Your job is to type your answer and then press Enter.");
-    print_message(INFO, "If you get the answer wrong, the correct answer will be shown.\n");
+    print_message(INFO, "If you get the answer wrong, the correct answer will be shown.");
+    print_message(INFO, "Type '!exit' to quit the quiz at any time.");
+    print_message(INFO, "Good luck!\n");
 
     return;
 }
@@ -24,7 +26,7 @@ void gamemode_select() {
         print_message(INFO, "  1. One Rounder (Every question is asked once)");
         print_message(INFO, "  2. One Rounder Reversed (Answers are questions, and vice versa)");
         print_message(INFO, "  3. Infinite (Questions are asked until you quit)");
-        print_message(INFO, "  4. Infinite Reversed (Answers are questions, and vice versa)");
+        print_message(INFO, "  4. Infinite Reversed (Answers are questions, and vice versa)\n");
 
         answer_correct = 1;
 
@@ -66,7 +68,7 @@ void gamemode_select() {
             print_message(INFO, "Infinite Reversed");
             break;
     }
-
+    print_message(INFO, "");
 
     return;
 }
