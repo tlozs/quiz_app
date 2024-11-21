@@ -119,17 +119,13 @@ void print_message(message_type type, const char *message, ...) {
 }
 
 int getchar_equals(char c) {
-    char input = 0;
+    char input = tolower(getch());
 
-    if (c == 0)  {
-        getch();
+    if (c == 0)
         printf("\n");
-    }
-    else {
-        input = tolower(getchar());
-        while (!(input == '\n' || getchar() == '\n'));
-    }
-    
+    else
+        printf("%c\n", input);
+
     return input == c;
 }
 
