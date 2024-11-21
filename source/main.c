@@ -9,7 +9,7 @@
 int main(int argc, char *argv[]) {
     srand(time(NULL));
     clear_screen();
-
+    /* TODO: make things const */
     init_quiz();
 
     read_all_input(argc, argv);

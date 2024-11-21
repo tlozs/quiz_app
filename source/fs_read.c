@@ -86,11 +86,17 @@ void read_file(FILE *file, const char *file_path) {
     char line[LINE_MAX];
     unsigned int line_number = 0;
 
-    while (fgets(line, sizeof(line), file) != NULL) { /* TODO: what should happen with longer lines */
+    while (fgets(line, sizeof(line), file) != NULL) {
         line_number++;
-        
+
+        if (sizeof(line) == strlen(line) + 1) {
+            print_message(WARNING, "Unable to parse line %d of '%s': Line too long.", line_number, file_path);
+            
+            /* skip the rest until newline */
+            while (fgetc(file) != '\n');
+        }
         /* Check if the line is not just a newline character */
-        if (1 < strlen(line)) {
+        else if (1 < strlen(line)) {
             if (format_correct(line))
                 extend_quiz(parse_to_qa(line));
             else
