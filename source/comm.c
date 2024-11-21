@@ -17,13 +17,20 @@ void welcome_toast(int count) {
 }
 
 void gamemode_select() {
+    int characters_skipped;
+    int answer;
     print_message(INFO, "Select the game mode:");
     print_message(INFO, "1. One Rounder (Every question is asked once)");
     print_message(INFO, "2. One Rounder Reversed (Answers are questions, and vice versa)");
     print_message(INFO, "3. Infinite (Questions are asked until you quit)");
     print_message(INFO, "4. Infinite Reversed (Answers are questions, and vice versa)");
 
-    switch (getchar()) { /* TODO: getchar skipping, getchar_equals portability */
+    /* Force switch to the default case if multiple characters are entered */
+    answer = get_one_char(&characters_skipped);
+    if (characters_skipped)
+        answer = 0;
+
+    switch (answer) {
         case '1':
             gamemode = ONEROUNDER;
             break;
@@ -37,7 +44,9 @@ void gamemode_select() {
             gamemode = INFINITE_REVERSED;
             break;
         default:
+            clear_screen();
             print_message(ERROR, "Invalid game mode selected.");
+            welcome_toast(quiz->size);
             gamemode_select();
             break;
     }
@@ -92,6 +101,16 @@ void print_message(message_type type, const char *message, ...) {
     return;
 }
 
+int get_one_char(int *out_skipped) {
+    int input = tolower(getchar());
+    if (out_skipped) *out_skipped = 0;
+
+    while (!(input == '\n' || getchar() == '\n'))
+        if (out_skipped) (*out_skipped)++;
+
+    return input;
+}
+
 int getchar_equals(char c) {
     char input = 0;
 
@@ -99,10 +118,8 @@ int getchar_equals(char c) {
         getch();
         printf("\n");
     }
-    else {
-        input = tolower(getchar());
-        while (!(input == '\n' || getchar() == '\n'));
-    }
+    else
+        input = get_one_char(NULL);
     
     return input == c;
 }

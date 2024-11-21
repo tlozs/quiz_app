@@ -31,6 +31,16 @@ void gamemode_select();
 void print_message(message_type type, const char *message, ...);
 
 /**
+ * Gets a character from the console and skips any remaining characters until a newline is found.
+ * 
+ * If the parameter is not needed, it can be NULL.
+ * 
+ * @param out_skipped Secondary return value for the amount of skipped characters
+ * @return The received character converted to its lowercase form
+ */
+int get_one_char(int *out_skipped);
+
+/**
  * Gets a character from the console and case insensitively checks
  * if it is equal to the given character.
  * 
@@ -40,7 +50,7 @@ void print_message(message_type type, const char *message, ...);
  * If the parameter is 0, it works as a Press Any Key function.
  * 
  * @param c The character to compare to
- * @return char The character received
+ * @return The character received
  */
 int getchar_equals(char c);
 

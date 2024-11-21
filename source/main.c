@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
     clear_screen();
     /* TODO: make things const */
+    /* TODO: all functions and globals in header? */
     init_quiz();
 
     read_all_input(argc, argv);
