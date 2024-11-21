@@ -86,7 +86,7 @@ void read_file(FILE *file, const char *file_path) {
     char line[LINE_MAX];
     unsigned int line_number = 0;
 
-    while (fgets(line, sizeof(line), file) != NULL) {
+    while (fgets(line, sizeof(line), file) != NULL) { /* TODO: what should happen with longer lines */
         line_number++;
         
         /* Check if the line is not just a newline character */
