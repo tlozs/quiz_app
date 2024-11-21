@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <string.h>
+#include <ctype.h>
 #include <limits.h>
 #include "fs_read.h"
 #include "fs_utils.h"
@@ -34,6 +35,18 @@ int exactly_one_tab(const char *line) {
     char *last_tab = strrchr(line, '\t');
 
     return first_tab != NULL && first_tab == last_tab;
+}
+
+char *trim(char *str) {
+    char *end = str + strlen(str) - 1;
+
+    while (isspace(*str))
+        str++;
+    while (str < end && isspace(*end))
+        end--;
+    *(end + 1) = '\0';
+
+    return str;
 }
 
 int extension_allowed(const char *extension) {

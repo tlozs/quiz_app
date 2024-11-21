@@ -3,6 +3,7 @@
 #include <string.h>
 #include "quiz.h"
 #include "comm.h"
+#include "fs_utils.h"
 #include "evaluation.h"
 
 Quiz *quiz;
@@ -23,18 +24,23 @@ void init_quiz() {
     return;
 }
 
-void extend_quiz(QAPair *qa) {
-    if (quiz->size == quiz->capacity) {
-        quiz->capacity *= 2;
-        
-        quiz->qas = realloc(quiz->qas, quiz->capacity * sizeof(QAPair*));
-        if(quiz->qas == NULL)
-            print_message(FATAL, "Memory allocation failed.");
+int extend_quiz(QAPair *qa) {
+    int success = 0;
+    
+    if (qa != NULL) {
+        if (quiz->size == quiz->capacity) {
+            quiz->capacity *= 2;
+            
+            quiz->qas = realloc(quiz->qas, quiz->capacity * sizeof(QAPair*));
+            if(quiz->qas == NULL)
+                print_message(FATAL, "Memory allocation failed.");
+        }
+
+        quiz->qas[quiz->size++] = qa;
+        success = 1;
     }
 
-    quiz->qas[quiz->size++] = qa;
-
-    return;
+    return success;
 }
 
 void shrink_quiz_size() {
@@ -69,27 +75,28 @@ QAPair* parse_to_qa(const char *line) {
     if (qa == NULL)
         print_message(FATAL, "Memory allocation failed.");
     
-    parse_question(qa, line, tab);
-    parse_answer(qa, tab);
+    if (!(parse_question(qa, line, tab) && parse_answer(qa, tab))) {
+        free(qa);
+        qa = NULL;
+    }
     
     return qa;
 }
 
-
-void parse_question(QAPair *qa, const char *line, char *tab) {
+int parse_question(QAPair *qa, const char *line, char *tab) {
     qa->question = malloc(tab - line + 1);
     if (qa->question == NULL)
         print_message(FATAL, "Memory allocation failed.");
     
     /* since source is longer, no null terminator is copied, so we add it manually */
     strncpy(qa->question, line, tab - line);
-    qa->question[tab - line] = '\0';
+    qa->question[tab - line] = '\0';    
 
-    return;
+    return *(qa->question = trim(qa->question));
 }
 
-void parse_answer(QAPair *qa, char *tab) {
-    /* Remove newline character if present (from the end of the line)*/
+int parse_answer(QAPair *qa, char *tab) {
+    /* Remove newline character from the end of the line (if present) */
     tab[strcspn(tab, "\n")] = '\0';
 
     qa->answer = malloc(strlen(tab + 1) + 1);
@@ -99,7 +106,7 @@ void parse_answer(QAPair *qa, char *tab) {
     /* This copies the null terminator as well */
     strcpy(qa->answer, tab + 1);
     
-    return;
+    return *(qa->answer = trim(qa->answer));
 }
 
 QAPair *random_question(int range, int *out_index) {

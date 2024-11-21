@@ -2,6 +2,9 @@ What is the capital of France?	Paris
 What is 2 + 2?	4
 In the context of software development, particularly in the realm of object-oriented programming, what are the primary principles and design patterns that one should adhere to in order to ensure that the codebase remains maintainable, scalable, and robust over time, especially when considering the potential for future enhancements and modifications? Additionally, how do these principles and patterns facilitate the process of debugging and testing, and what are some common pitfalls that developers might encounter if these guidelines are not followed? Please provide detailed explanations and examples to illustrate your points, and discuss how these practices can be applied in both small and large-scale projects, taking into account the various stages of the software development lifecycle, from initial design and architecture to implementation, testing, deployment, and maintenance. Furthermore, consider the role of modern development tools and methodologies, such as continuous integration and continuous deployment (CI/CD), automated testing frameworks, and version control systems, in supporting these best practices and ensuring that the development process is efficient and effective. Finally, reflect on the importance of code reviews, pair programming, and other collaborative techniques in promoting code quality and knowledge sharing within development teams, and how these practices can contribute to the overall success of a software project.	Just follow the golden rule: "If it compiles, ship it!" And remember, debugging is like being the detective in a crime movie where you are also the murderer.
 
-
-What is the boiling point of water?	100
+	asd
+	
+asdasd			   
+asd	   
+What is the boiling point of water?	  100         
 What is the largest planet in our solar system?	Jupiter

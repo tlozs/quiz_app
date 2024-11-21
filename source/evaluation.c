@@ -31,8 +31,6 @@ int ask_and_correct_question(QAPair *qa) {
     /* Remove newline character if present */
     user_answer[strcspn(user_answer, "\n")] = '\0';
 
-    /* TODO: trim function? */
-
     if (strcmp(user_answer, "!exit") == 0)
         exit = 1;
     else if (strcmp(user_answer, correct_answer) == 0)

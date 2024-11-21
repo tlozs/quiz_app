@@ -44,6 +44,17 @@ char *search_last_dot(const char *string);
 int exactly_one_tab(const char *line);
 
 /**
+ * Trims leading and trailing whitespace from a string.
+ * 
+ * The function modifies the string in place.
+ * Without using the return value, only the trailing whitespace is removed.
+ * 
+ * @param str The string to trim
+ * @return Pointer to the trimmed string
+ */
+char *trim(char *str);
+
+/**
  * Checks if the file extension is one of the allowed extensions.
  * 
  * @param extension Pointer to the last dot in the file path (essentially the extension as a string)

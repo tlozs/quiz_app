@@ -35,8 +35,9 @@ void init_quiz();
  * If the quiz is full, the capacity is doubled, and the quiz is reallocated.
  * 
  * @param qa Question-answer pair to add to the quiz
+ * @return 1 if the question-answer pair was successfully added, 0 otherwise
  */
-void extend_quiz(QAPair *qa);
+int extend_quiz(QAPair *qa);
 
 /**
  * Shrinks the quiz capacity (and memory usage) to the current size.
@@ -59,6 +60,8 @@ void free_quiz();
  * 
  * - The question is separated from the answer by a tab character
  * 
+ * - The question and answer are not empty
+ * 
  * @param line Line to parse
  * @return Pointer to the parsed question-answer pair
  */
@@ -67,19 +70,25 @@ QAPair* parse_to_qa(const char *line);
 /**
  * Parses the question part of an input line into a question-answer pair.
  * 
+ * Parsing fails if the question is only whitespace.
+ * 
  * @param qa Pointer to the question-answer pair
  * @param line Line to parse
  * @param tab Pointer to the tab character in the line
+ * @return 1 if the question was successfully parsed, 0 otherwise
  */
-void parse_question(QAPair *qa, const char *line, char *tab);
+int parse_question(QAPair *qa, const char *line, char *tab);
 
 /**
  * Parses the answer part of an input line into a question-answer pair.
  * 
+ * Parsing fails if the answer is only whitespace.
+ * 
  * @param qa Pointer to the question-answer pair
  * @param tab Pointer to the tab character in the line
+ * @return 1 if the answer was successfully parsed, 0 otherwise
  */
-void parse_answer(QAPair *qa, char *tab);
+int parse_answer(QAPair *qa, char *tab);
 
 /**
  * Gets a random question from the quiz.
