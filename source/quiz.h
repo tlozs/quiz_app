@@ -78,13 +78,6 @@ void parse_answer(QAPair *qa, char *tab);
 QAPair *random_question(int range, int *out_index);
 
 /**
- * Asks a question and corrects the user if the answer is wrong.
- * 
- * @param qa Pointer to the question-answer pair
- */
-void ask_and_correct_question(QAPair *qa);
-
-/**
  * Swaps two question-answer pairs in the quiz.
  * 
  * @param i Index of the first question-answer pair
