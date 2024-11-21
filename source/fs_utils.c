@@ -12,7 +12,6 @@ int format_correct(const char *line) {
 }
 
 int no_input_root() {
-    /* TODO: try_read_folder? */
     DIR* input_dir = opendir(input_root);
     int result = input_dir == NULL;
 
@@ -59,7 +58,7 @@ char *path_join(const char* const path, const char* const target) {
 
         sprintf(target_path, "%s\\%s", path, target);
     }
-    
+
     return target_path;
 }
 

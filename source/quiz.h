@@ -93,6 +93,10 @@ void ask_and_correct_question(QAPair *qa);
 void swap_qas(int i, int j);
 
 /**
- * Plays the quiz. //TODO: Add more details.
+ * Main gameplay loop. Asks random questions from the quiz.
+ * 
+ * After each question, the used question is swapped to the end of the quiz
+ * and the pool of questions is reduced by one. This method ensures that no
+ * question is asked twice in the same quiz session.
  */
 void play_quiz();
