@@ -60,26 +60,28 @@ void try_read_input(char *input_path) {
 int try_read_file(const char *target_location) {
     char *dot = search_last_dot(target_location);
     FILE *file;
+    int success = 0;
 
     if (dot && extension_allowed(dot) && (file = fopen(target_location, "r"))) {
         read_file(file, target_location);
         fclose(file);
-        return 1; /* TODO: to variable */
+        success = 1;
     }
 
-    return 0;
+    return success;
 }
 
 int try_read_folder(const char *target_location) {
     DIR *folder = opendir(target_location);
+    int success = 0;
 
     if (folder) {
         read_folder(folder, target_location);
         closedir(folder);
-        return 1;
+        success = 1;
     }
     
-    return 0;
+    return success;
 }
 
 void read_file(FILE *file, const char *file_path) {

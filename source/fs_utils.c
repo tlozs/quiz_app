@@ -38,15 +38,16 @@ int exactly_one_tab(const char *line) {
 
 int extension_allowed(const char *extension) {
     int i;
+    int allowed = 0;
 
-    for (i = 0; i < allowed_extensions_size; i++)
+    for (i = 0; !allowed && i < allowed_extensions_size; i++)
         if (strcmp(extension, allowed_extensions[i]) == 0)
-            return 1;
+            allowed = 1;
 
-    return 0;
+    return allowed;
 }
 
-char *path_join(const char* const path, const char* const target) {
+char *path_join(const char* path, const char* target) {
     char *target_path;
 
     if (target == NULL)

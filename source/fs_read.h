@@ -29,7 +29,7 @@ void read_all_input(int argc, char *argv[]);
  * The input is searched relative to the defined input_location constant, 
  * and the input is considered valid if it is within the input_location directory.
  * 
- * @param input Path to the input file or folder, including the input_location
+ * @param input_path Path to the input file or folder, including the input_location
  */
 void try_read_input(char *input_path);
 
@@ -61,6 +61,8 @@ int try_read_folder(const char *target_location);
  * Reads the contents of a file and registers the correctly formatted questions and answers.
  * 
  * The file is read line by line, and each non empty line is checked for correct formatting.
+ * 
+ * If the line is too long, it is skipped and an error message is printed.
  * 
  * @param file Pointer to the file to be read
  * @param file_path Path to the file

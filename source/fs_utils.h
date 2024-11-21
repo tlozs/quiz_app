@@ -60,7 +60,7 @@ int extension_allowed(const char *extension);
  * @param target Second path
  * @return Pointer to the joined path, should be freed after use
  */
-char *path_join(const char* const path, const char* const target);
+char *path_join(const char* path, const char* target);
 
 /**
  * Checks if the given path is within the input directory.

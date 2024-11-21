@@ -5,8 +5,8 @@
 
 #define ANSWER_SIZE 256
 
-time_t start, end, elapsed;
-int correct_answers = 0, asked_questions = 0;
+static time_t start, end, elapsed;
+static int correct_answers = 0, asked_questions = 0;
 
 int ask_and_correct_question(QAPair *qa) {
     char user_answer[ANSWER_SIZE];
@@ -59,9 +59,9 @@ void stop_timer() {
 }
 
 void evaluate_quiz() {
-    double percentage = (double)correct_answers / asked_questions * 100;
+    int percentage = correct_answers * 100 / asked_questions;
 
     print_message(INFO, "Quiz completed in %ld seconds.", elapsed);
     print_message(INFO, "You got %d out of %d questions correct.", correct_answers, asked_questions);
-    print_message(INFO, "That's %.2f%%!", percentage);
+    print_message(INFO, "That's %d%%!", percentage);
 }

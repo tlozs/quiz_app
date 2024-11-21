@@ -18,7 +18,10 @@ typedef enum GameMode {
     ONEROUNDER_REVERSED
 } GameMode;
 
+/* Global variable for the quiz containing the question-answer pairs and metadata */
 extern Quiz *quiz;
+
+/* Global variable for tracking the game mode */
 extern GameMode gamemode;
 
 /**
@@ -37,6 +40,8 @@ void extend_quiz(QAPair *qa);
 
 /**
  * Shrinks the quiz capacity (and memory usage) to the current size.
+ * 
+ * If the quiz is empty, the function will not crash.
  */
 void shrink_quiz_size();
 

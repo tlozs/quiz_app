@@ -2,10 +2,10 @@
 #include <time.h>
 #include "quiz.h"
 
-extern time_t start, end, elapsed;
-
 /**
  * Asks a question and corrects the user if the answer is wrong.
+ * 
+ * Takes care of reversing the question and answer if the game mode is reversed.
  * 
  * If the user types "!exit", the function will return 1, indicating that the user wants to exit.
  * 
