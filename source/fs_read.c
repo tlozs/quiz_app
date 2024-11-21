@@ -35,7 +35,7 @@ void read_all_input(int argc, char *argv[]) {
     if (argc == 1) {
         print_message(WARNING, "No input parameters specified in the command line.");
         print_message(QUESTION, "Would you like to read all files in the input directory? (y/n) ");
-        if (getchar_equals('y')) /* TODO: what if multiple characters entered */
+        if (getchar_equals('y'))
             try_read_input(path_join(input_root, NULL));
     }
     else
