@@ -1,11 +1,11 @@
 #pragma once
 
-typedef struct {
+typedef struct QAPair {
     char *question;
     char *answer;
 } QAPair;
 
-typedef struct {
+typedef struct Quiz {
     QAPair **qas;
     int size;
     int capacity;
@@ -26,6 +26,11 @@ void init_quiz();
  * @param qa Question-answer pair to add to the quiz
  */
 void extend_quiz(QAPair *qa);
+
+/**
+ * Shrinks the quiz capacity (and memory usage) to the current size.
+ */
+void shrink_quiz_size();
 
 /**
  * Frees all memory allocated for the quiz.

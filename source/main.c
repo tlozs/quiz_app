@@ -6,8 +6,10 @@
 int main(int argc, char *argv[]) {
 
     init_quiz();
-    
+
     read_all_input(argc, argv);
+
+    shrink_quiz_size();
 
     play_quiz();
 

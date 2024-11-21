@@ -29,6 +29,12 @@ void extend_quiz(QAPair *qa) {
     return;
 }
 
+void shrink_quiz_size() {
+    quiz->capacity = quiz->size;
+    quiz->qas = realloc(quiz->qas, quiz->capacity * sizeof(QAPair*));
+    return;
+}
+
 void free_quiz() {
     int i;
     for (i = 0; i < quiz->size; i++) {
@@ -55,6 +61,7 @@ QAPair* parse_to_qa(const char *line) {
 
     /* get rid of newline at the end:
        no space for null terminator, the newline character will be replaced by it */
+       /* TODO: check and only swap if there is newline */
     qa->answer = malloc(strlen(tab + 1));
     if (qa->answer == NULL)
         print_message(FATAL, "Memory allocation failed.");
