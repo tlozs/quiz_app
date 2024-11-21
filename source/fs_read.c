@@ -16,7 +16,7 @@ const int allowed_extensions_size = sizeof(allowed_extensions) / sizeof(allowed_
 void read_all_input(int argc, char *argv[]) {
     int i;
 
-    if (no_input_root()) {
+    if (no_input_root()) { /* TODO: newline for better grouping */
         print_message(ERROR, "Input directory not found.");
         print_message(QUESTION, "Would you like to create the input directory? (y/n) ");
 

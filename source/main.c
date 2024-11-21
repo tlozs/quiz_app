@@ -1,9 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "fs_read.h"
 #include "quiz.h"
 #include "evaluation.h"
+#include "comm.h"
 
 int main(int argc, char *argv[]) {
+    srand(time(NULL));
+    clear_screen();
 
     init_quiz();
 

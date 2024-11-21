@@ -2,8 +2,18 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <conio.h>
 #include "comm.h"
 #include "quiz.h"
+
+void welcome_toast(int count) {
+    print_message(INFO, "\nWelcome to the quiz!");
+    print_message(INFO, "You will be asked %d questions.", count);
+    print_message(INFO, "Your job is to type your answer and then press Enter.");
+    print_message(INFO, "If you get the answer wrong, the correct answer will be shown.");
+    print_message(INFO, "Good luck!");
+    return;
+}
 
 void print_message(message_type type, const char *message, ...) {
     char *color_code;
@@ -14,6 +24,10 @@ void print_message(message_type type, const char *message, ...) {
         case INFO:
         case QUESTION:
             color_code = "\033[1;32m";
+            prefix = "";
+            break;
+        case INCORRECT:
+            color_code = "\033[1;31m";
             prefix = "";
             break;
         case WARNING:
@@ -42,8 +56,24 @@ void print_message(message_type type, const char *message, ...) {
 }
 
 int getchar_equals(char c) {
-    char input = tolower(getchar());
-    int result = input == c;
-    while (!(input == '\n' || getchar() == '\n'));
-    return result;
+    char input;
+    if (c == 0)  {
+        getch();
+        printf("\n");
+        return 1;
+    }
+    else {
+        input = tolower(getchar());
+        while (!(input == '\n' || getchar() == '\n'));
+        return input == c;
+    }
+}
+
+void clear_screen() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+    return;
 }

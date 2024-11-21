@@ -4,6 +4,8 @@
 #include "quiz.h"
 #include "comm.h"
 
+#define ANSWER_SIZE 256
+
 Quiz *quiz;
 
 void init_quiz() {
@@ -64,7 +66,7 @@ QAPair* parse_to_qa(const char *line) {
     Otherwise, we will overwrite the newline character with the null terminator */
     if (line[strlen(line) - 1] != '\n')
         newline_offset = 1;
-    
+    /* TODO: strcspn? */
     qa->answer = malloc(strlen(tab + 1) + newline_offset);
     if (qa->answer == NULL)
         print_message(FATAL, "Memory allocation failed.");
@@ -73,16 +75,58 @@ QAPair* parse_to_qa(const char *line) {
     return qa;
 }
 
-void play_quiz() {
-    int i;
+QAPair *random_question(int range, int *out_index) {
+    *out_index = rand() % range;
+    return quiz->qas[*out_index];
+}
 
+void ask_and_correct_question(QAPair *qa) {
+    char answer[ANSWER_SIZE];
+
+    /* TODO: move to evaluation */
+
+    print_message(INFO, "\n%s ", qa->question);
+    fgets(answer, sizeof(answer), stdin);
+
+    /* Remove newline character if present */
+    answer[strcspn(answer, "\n")] = '\0';
+
+    if (strcmp(answer, qa->answer) != 0)
+        print_message(INCORRECT, "%s", qa->answer);
+    
+    return;
+}
+
+void swap_qas(int i, int j) {
+    QAPair *temp = quiz->qas[i];
+    quiz->qas[i] = quiz->qas[j];
+    quiz->qas[j] = temp;
+    return;
+}
+
+void play_quiz() {
+    int current;
+    int range = quiz->size;
     if (quiz->size == 0)
         print_message(FATAL, "Could not read any data from the specified inputs.");
 
-    for (i = 0; i < quiz->size; i++) {
-        printf("Question %d: %s\n", i + 1, quiz->qas[i]->question);
-        printf("Answer: %s\n\n", quiz->qas[i]->answer);
+
+    welcome_toast(range);
+    print_message(QUESTION, "Press any key to start the quiz...");
+    getchar_equals(0);
+
+    /* get rid of potential error messages */
+    clear_screen();
+
+    welcome_toast(range);
+/* TODO: count elapsed time */
+
+    while (range) {
+        QAPair *qa = random_question(range, &current);
+        ask_and_correct_question(qa);
+        swap_qas(current, --range);
     }
+    
     return;
 }
 
