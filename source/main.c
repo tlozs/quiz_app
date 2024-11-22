@@ -9,18 +9,13 @@
 int main(int argc, char *argv[]) {
     srand(time(NULL));
     clear_screen();
-
     init_quiz();
-
+    
     read_all_input(argc, argv);
-
     shrink_quiz_size();
-
     play_quiz();
-
     evaluate_quiz();
 
     free_quiz();
-
     return 0;
 }
