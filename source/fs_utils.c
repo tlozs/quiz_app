@@ -37,16 +37,23 @@ int exactly_one_tab(const char *line) {
     return first_tab != NULL && first_tab == last_tab;
 }
 
-char *trim(char *str) {
-    char *end = str + strlen(str) - 1;
+char *trim(const char *str) {
+    const char *end = str + strlen(str) - 1;
+    char *trimmed;
 
     while (isspace(*str))
         str++;
     while (str < end && isspace(*end))
         end--;
-    *(end + 1) = '\0';
 
-    return str;
+    trimmed = malloc(end - str + 2);
+    if (trimmed == NULL)
+        print_message(FATAL, "Memory allocation failed.");
+    
+    strncpy(trimmed, str, end - str + 1);
+    trimmed[end - str + 1] = '\0';
+    
+    return trimmed;
 }
 
 int extension_allowed(const char *extension) {

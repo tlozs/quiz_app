@@ -74,8 +74,13 @@ QAPair* parse_to_qa(const char *line) {
     
     if (qa == NULL)
         print_message(FATAL, "Memory allocation failed.");
+
+    qa->question = NULL;
+    qa->answer = NULL;
     
     if (!(parse_question(qa, line, tab) && parse_answer(qa, tab))) {
+        free(qa->question);
+        free(qa->answer);
         free(qa);
         qa = NULL;
     }
@@ -84,18 +89,28 @@ QAPair* parse_to_qa(const char *line) {
 }
 
 int parse_question(QAPair *qa, const char *line, char *tab) {
+    char *trimmed;
+    
+    /* Creating the raw question string */
     qa->question = malloc(tab - line + 1);
     if (qa->question == NULL)
         print_message(FATAL, "Memory allocation failed.");
     
     /* since source is longer, no null terminator is copied, so we add it manually */
     strncpy(qa->question, line, tab - line);
-    qa->question[tab - line] = '\0';    
+    qa->question[tab - line] = '\0';
 
-    return *(qa->question = trim(qa->question));
+    /* Trimming the question, and deleting original */
+    trimmed = trim(qa->question);
+    free(qa->question);
+    qa->question = trimmed;
+
+    return *(qa->question);
 }
 
 int parse_answer(QAPair *qa, char *tab) {
+    char *trimmed;
+
     /* Remove newline character from the end of the line (if present) */
     tab[strcspn(tab, "\n")] = '\0';
 
@@ -106,7 +121,12 @@ int parse_answer(QAPair *qa, char *tab) {
     /* This copies the null terminator as well */
     strcpy(qa->answer, tab + 1);
     
-    return *(qa->answer = trim(qa->answer));
+    /* Trimming the answer, and deleting original */
+    trimmed = trim(qa->answer);
+    free(qa->answer);
+    qa->answer = trimmed;
+    
+    return *(qa->answer);
 }
 
 QAPair *random_question(int range, int *out_index) {
