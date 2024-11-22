@@ -114,15 +114,13 @@ void read_file(FILE *file, const char *file_path) {
 
 void read_folder(DIR *folder, const char *folder_path) {
     struct dirent *entry;
-    char *folder_path_extended;
     char *fname;
 
     while ((entry = readdir(folder))) {
         fname = entry->d_name;
 
         if (!(strcmp(fname, ".") == 0 || strcmp(fname, "..") == 0)) {
-            folder_path_extended = path_join(folder_path, fname);
-            try_read_input(folder_path_extended);
+            try_read_input(path_join(folder_path, fname));
         }
     }
 
