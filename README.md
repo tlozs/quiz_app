@@ -35,7 +35,7 @@ What is the smallest country in the world?  Vatican City
 ## Indítás
 A programot parancssorból lehet indítani a következőképpen:
 ```
-quiz.exe <param1> <param2> ... <paramN>
+quiz_app.exe <param1> <param2> ... <paramN>
 ```
 
 Paraméternek megadható tetszőleges mennyiségű szövegfájl,  mappa, vagy akár mindkettő.
@@ -135,10 +135,10 @@ Minden esetben a header fileok tartalmazzák az egyes függvények használati i
             return;
         }
         ```
-    - Így próbáljuk beolvasni az adott útvonalról:
+    - Így próbálunk beolvasni az adott útvonalról:
         ```c
         void try_read_input(char *input_path) {
-            if (!inside_input_root(input_path)) {   // arról volt szó az input mappából olvasunk be
+            if (!inside_input_root(input_path)) {   // arról volt szó, az input mappából olvasunk be
                 print_message(ERROR, "Input '%s' is not within the input directory.", input_path);
             }
             // előszőr fájlként, vagy ha nem megy, akkor mappaként próbáljuk meg beolvasni
@@ -197,27 +197,31 @@ Minden esetben a header fileok tartalmazzák az egyes függvények használati i
         ```
     - A fő játékciklus:
         ```c
-        int current;    // a random választott kérdés indexe
-        int exit = 0;   // érkezett-e kilépési kérés
-        int range = quiz->size;
-        if (range == 0)
-            print_message(FATAL, "Could not read any data from the specified inputs.");
+        void play_quiz() {
+            int current;    // a random választott kérdés indexe
+            int exit = 0;   // érkezett-e kilépési kérés
+            int range = quiz->size;
+            if (range == 0)
+                print_message(FATAL, "Could not read any data from the specified inputs.");
 
-        gamemode_select();  // a játékmód kiválasztása
-        start_timer();      // óra indul
+            gamemode_select();  // a játékmód kiválasztása
+            start_timer();      // óra indul
 
-        // amíg ki nem fogyunk a kérdésből, vagy kilépési kérés nem érkezik
-        while (range && !exit) {
-            QAPair *qa = random_question(range, &current);  // választunk egyet
-            exit = ask_and_correct_question(qa);            // megkérdezzük
-            swap_qas(current, --range);                     // félrerakjuk a végére és csökkentjük a teret
+            // amíg ki nem fogyunk a kérdésből, vagy kilépési kérés nem érkezik
+            while (range && !exit) {
+                QAPair *qa = random_question(range, &current);  // választunk egyet
+                exit = ask_and_correct_question(qa);            // megkérdezzük
+                swap_qas(current, --range);                     // félrerakjuk a végére és csökkentjük a teret
 
-            // Végtelenített mód esetén, ha kifogynánk a kérdésből, visszatesszük az összeset a kalapba
-            if ((gamemode == INFINITE || gamemode == INFINITE_REVERSED) && range == 0)
-                range = quiz->size;            
+                // Végtelenített mód esetén, ha kifogynánk a kérdésből, visszatesszük az összeset a kalapba
+                if ((gamemode == INFINITE || gamemode == INFINITE_REVERSED) && range == 0)
+                    range = quiz->size;            
+            }
+
+            stop_timer();       // óra leáll
+            
+            return;
         }
-
-        stop_timer();       // óra leáll
         ```
     
     
@@ -243,10 +247,10 @@ Minden esetben a header fileok tartalmazzák az egyes függvények használati i
                 correct_answer = qa->answer;
             }
 
-            // eredményhirdetéshez kell
+            // eredményhirdetéshez kell (globális)
             asked_questions++;
 
-            // megkérdezzük és beolvassuk a választ
+            // megkérdezzük, majd beolvassuk a választ
             print_message(INFO, "%s ", question);
             fgets(user_answer, sizeof(user_answer), stdin);
 
