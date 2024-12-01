@@ -1,0 +1,127 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{lmodern}
+\usepackage[ngerman]{babel}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{courier}
+\usepackage[many]{tcolorbox}
+
+\tcolorboxenvironment{lstlisting}{
+  spartan,
+  frame empty,
+  boxsep=0mm,
+  left=1mm,right=1mm,top=-1mm,bottom=-1mm,
+  colback=black,
+}
+
+\lstset{
+    language=C,
+    backgroundcolor=\color{black},
+    basicstyle=\ttfamily\small\color{white},
+    keywordstyle=\color{white},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    escapeinside={\%*}{*)},
+}
+
+\title{Benutzerhandbuch von Quiz App}
+\author{Zsolt Gaál}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Einführung}
+Das Programm liest Frage-Antwort-Paare ein. Es stellt die Frage und erwartet die korrekte Antwort. Falls eine falsche Antwort gegeben wird, korrigiert es sofort. Am Ende bekommt der Benutzer eine Auswertung seiner Ergebnisse.
+
+\section{Eingabe}
+
+Das Programm arbeitet ausschließlich mit \texttt{.txt} oder \texttt{.tsv} Quelldateien. 
+
+\subsection{Quelldateiformatierung}
+Die innere Strukturierung der Datei soll folgendermaßen aufgebaut sein:
+
+\begin{itemize}
+    \item Leere Zeilen sind erlaubt
+    \item In einer Zeile muss sich genau ein Frage-Antwort-Paar befinden
+    \item Weder die Frage noch die Antwort darf leer sein
+    \item Die Frage und die Antwort sind mit genau einem Tabulatorzeichen (\texttt{\textbackslash t}) zu trennen
+    \item Links vom Tabulatorzeichen befindet sich die Frage, und rechts vom Tabulatorzeichen befindet sich die Antwort
+\end{itemize}
+
+\subsection{Quelldatei Beispiel}
+Beispiel für eine gut aufgebaute Quelldatei: \texttt{input.txt}
+
+\begin{lstlisting}
+What is the capital of France?  Paris
+Who wrote "Romeo and Juliet"?   William Shakespeare
+What is the largest planet in our solar system? Jupiter
+What is the chemical symbol for gold?   Au
+Who painted the Mona Lisa?  Leonardo da Vinci
+
+What is the tallest mountain in the world?  Mount Everest
+What is the square root of 64?  8
+
+What year did the Titanic sink? 1912
+Who was the first president of the United States?   George Washington
+What is the smallest country in the world?  Vatican City
+\end{lstlisting}
+
+\section{Starten}
+Das Programm kann über die Kommandozeile wie folgt gestartet werden:
+
+\begin{lstlisting}
+quiz_app.exe <param1> <param2> ... <paramN>
+\end{lstlisting}
+
+\subsection{Parameter}
+Als Parameter sind beliebig viele Textdateien oder Ordner, sogar beide, anzugeben.
+
+\subsection{Eingabedateien}
+Die angegebenen Eingabedateien sucht das Programm im \texttt{input}-Ordner, der sich im gleichen Verzeichnis wie das Programm befindet.
+
+Wenn ein Ordner als Eingabeparameter angegeben wird, werden alle geeigneten Dateien in diesem Ordner eingelesen.
+Falls keine Eingabe spezifiziert wird, wird der gesamte \texttt{input}-Ordner eingelesen.
+
+
+\section{Lauflogik des Programms}
+Das Programm lädt die eingelesenen Informationen in \texttt{struct} Datentypen. Diese Dateien werden im dynamisch allokierten Speicherplatz gespeichert.
+
+Zufällig wird eine Frage von den ersten \(N\) (praktisch alle) Fragen ausgewählt und gestellt. Die benutzte Frage wird danach mit der letzten Frage getauscht, und die nächste Frage wird nur aus den ersten \(N-1\) Fragen ausgewählt. Dies wird wiederholt, bis es keine Fragen mehr gibt.
+
+\section{Nutzererlebnis}
+
+\subsection{Spielmodi}
+Der Benutzer kann von vier verschiedenen Spielmodi wählen:
+\begin{enumerate}
+    \item \textbf{Einzeldurchlauf} - Nachdem alle Fragen gestellt wurden, werden die Ergebnisse gezeigt und das Spiel endet.
+    \item \textbf{Einzeldurchlauf Umgekehrt} - Eine umgekehrte Variante ist auch verfügbar, bei der die Antworten als Fragen gestellt werden und die Frage als Antwort erwartet wird.
+    \item \textbf{Endloserlebnis} - Falls es keine Fragen mehr gibt, fängt es von vorne an. Es besteht die Möglichkeit, das Spiel durch ein spezifisches Stichwort zu beenden. Dann werden die Ergebnisse gezeigt und das Spiel endet.
+    \item \textbf{Endloserlebnis Umgekehrt} - Ganz einfach, wie der Titel sagt.
+\end{enumerate}
+
+\subsection{Abbruchbefehl}
+Mit dem Befehl \texttt{!exit} kann das Quiz jederzeit abgebrochen werden.
+
+\section{Auswertung}
+Als Ergebnis werden die Spielzeit, die Anzahl der gestellten Fragen und auch die Anzahl der richtig beantworteten Fragen angezeigt.
+
+\end{document}

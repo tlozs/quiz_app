@@ -1,0 +1,279 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[
+    top=1in,
+    bottom=1in,
+    left=1in,
+    right=1in
+]{geometry}
+\usepackage{lmodern}
+\usepackage[ngerman]{babel}
+\usepackage{hyperref}
+\usepackage{listingsutf8}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{courier}
+\usepackage[many]{tcolorbox}
+
+\tcolorboxenvironment{lstlisting}{
+  spartan,
+  frame empty,
+  boxsep=0mm,
+  left=1mm,right=1mm,top=-1mm,bottom=-1mm,
+  colback=black,
+}
+
+\lstset{
+    language=C,
+    backgroundcolor=\color{black},
+    basicstyle=\ttfamily\small\color{white},
+    keywordstyle=\bfseries\color{cyan},
+    commentstyle=\color{green},
+    stringstyle=\color{orange},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    escapeinside={\%*}{*)},
+}
+
+
+\title{Entwicklerdokumentation von Quiz App}
+\author{Zsolt Gaál}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Einführung}
+In jedem Fall enthalten die Header-Dateien die Gebrauchsanweisungen für die einzelnen Funktionen, d.h. eine detaillierte Dokumentation über die Funktionsweise, Parameter und Rückgabewerte.
+
+\section{Dateistruktur}
+
+\subsection{\texttt{main.c}}
+Enthält die \texttt{main} Funktion, die das Programm startet und alle Hauptprozesse aufruft:
+
+\begin{lstlisting}
+int main(int argc, char *argv[]) {
+    srand(time(NULL));  // random seed
+    clear_screen();     // Konsole leeren
+    init_quiz();        // Speicherplatz allokieren
+    
+    read_all_input(argc, argv); // Einlesen
+    shrink_quiz_size();         // Speicherplatzminimierung
+    play_quiz();                // Spiel
+    evaluate_quiz();            // Auswertung
+
+    free_quiz();        // Speicherplatz freigeben
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{\texttt{comm.c}}
+Dient der Vereinfachung der Kommunikation mit dem Benutzer. Anstelle von \texttt{printf} wird eine eigene Nachrichtenanzeigefunktion mit verschiedenen Nachrichtentypen implementiert. Enthält die Menüanzeige, den Spielmoduswähler und den Tastenanschlagsbeobachter.
+
+\subsection{\texttt{fs\_utils.c}}
+Enthält kürzere Hilfsfunktionen: Zeichenkettenmanipulationen, Anforderungsüberprüfungen.
+
+\subsection{\texttt{fs\_read.c}}
+Verantwortlich für das Einlesen der Eingabedateien. Navigiert im Dateisystem, benachrichtigt den Benutzer bei Fehlern und fordert gegebenenfalls eine Intervention an.
+
+\noindent Einige globale Konstanten:
+\begin{lstlisting}
+const char * const input_root = "input";
+const char * const allowed_extensions[] = {".txt", ".tsv"};
+const int allowed_extensions_size = sizeof(allowed_extensions) / sizeof(allowed_extensions[0]);
+\end{lstlisting}
+
+\noindent Das Haupteinlesen:
+\begin{lstlisting}
+void read_all_input(int argc, char *argv[]) {
+    int i;
+
+    // wenn kein Eingabeverzeichnis vorhanden ist, erstellen wir eines
+    if (no_input_root()) {
+        print_message(ERROR, "Input directory not found.");
+        print_message(QUESTION, "Would you like to create the input directory? (y/n) ");
+\end{lstlisting}
+\begin{lstlisting}
+
+        if (getchar_equals('y') && create_input_root()) {
+            print_message(INFO, "Input directory created.");
+            print_message(INFO, "Place your input files in the input directory, then press any key to continue.");
+            print_message(QUESTION, "If there is no ANY key on your keyboard, consult your local keyboard vendor...");
+            getchar_equals(0);
+        } 
+        else {
+            print_message(FATAL, "Could not create input directory.");
+        }
+        print_message(INFO, "");
+    }
+
+    // wenn keine Parameter angegeben sind, lesen wir den gesamten Input-Ordner ein
+    if (argc == 1) {
+        print_message(WARNING, "No input parameters specified in the command line.");
+        print_message(QUESTION, "Would you like to read all files in the input directory? (y/n) ");
+        if (getchar_equals('y'))
+            try_read_input(path_join(input_root, NULL));
+    }
+    else // ohne Fehlerbehandlung w%*\color{green}ä*)re es nur so :)
+        for (i = 1; i < argc; i++)
+            // da wir relativ zum Eingabeverzeichnis suchen, f%*\color{green}ü*)gen wir den gesuchten Pfad mit dem Eingabeverzeichnis zusammen
+            try_read_input(path_join(input_root, argv[i]));
+
+    return;
+}
+\end{lstlisting}
+\noindent So versuchen wir, vom angegebenen Pfad zu lesen:
+\begin{lstlisting}
+        void try_read_input(char *input_path) {
+            if (!inside_input_root(input_path)) {   // es wurde gesagt, dass wir aus dem input-Verzeichnis lesen
+                print_message(ERROR, "Input '%s' is not within the input directory.", input_path);
+            }
+            // zuerst versuchen wir, die Eingabe als Datei zu lesen, und falls das nicht klappt, als Ordner
+            else if (!try_read_file(input_path) && !try_read_folder(input_path)) {
+                print_message(ERROR, "Could not read input path: '%s'", input_path);
+            }
+
+            free(input_path);   // Speicherplatz freigeben
+            return;
+        }
+\end{lstlisting}
+
+\subsection{\texttt{quiz.c}}
+Verwalten der Quiz-Datenbank und Implementierung der Quiz-Logik. Hier erfolgt die Speicherzuweisung und freigabe, das Hinzufügen neuer Fragen und die Steuerung der Hauptspielschleife.
+
+\newpage
+\noindent   Die Quiz-Datenbank:
+\begin{lstlisting}
+typedef struct Quiz {
+    %*\bfseries\color{cyan}QAPair*) **qas;   // die Liste der Frage-Antwort-Paare
+    int size;       // die Anzahl der gespeicherten Daten
+    int capacity;   // die Gr%*\color{green}öß*)e des f%*\color{green}ü*)r die Liste reservierten Speichers
+} Quiz;
+\end{lstlisting}
+
+\noindent Der Aufbau der einzelnen Daten ist äußerst einfach:
+\begin{lstlisting}
+typedef struct QAPair {
+    char *question; // die Frage im Speicher
+    char *answer;   // die Antwort
+} QAPair;
+\end{lstlisting}
+
+\noindent Das Hinzufügen neuer Daten zur Datenbank erfolgt wie folgt:
+\begin{lstlisting}
+int extend_quiz(%*\bfseries\color{cyan}QAPair*) *qa) {
+    int success = 0;    // ob es erfolgreich war
+    
+    // es ist schwierig, nach nichts zu fragen
+    if (qa != NULL) {
+        // wenn wir mehr Platz brauchen
+        if (quiz->size == quiz->capacity) {
+            quiz->capacity *= 2;
+            
+            quiz->qas = realloc(quiz->qas, quiz->capacity * sizeof(QAPair*));
+            if(quiz->qas == NULL)
+                print_message(FATAL, "Memory allocation failed.");
+        }
+
+        // wir haben schon genug Platz
+        quiz->qas[quiz->size++] = qa;
+        success = 1;
+    }
+
+    return success;
+}
+\end{lstlisting}
+
+\noindent Die Hauptspielschleife:
+\begin{lstlisting}
+void play_quiz() {
+    int aktuelle;    // der Index der zuf%*\color{green}ä*)llig ausgew  %*\color{green}ä*)hlten Frage
+    int exit = 0;   // ob eine Beendigungsanforderung eingegangen ist
+    int range = quiz->size;
+    if (range == 0)
+        print_message(FATAL, "Could not read any data from the specified inputs.");
+
+    gamemode_select();  // Auswahl des Spielmodus
+    start_timer();      // Uhr startet
+
+    // solange wir noch Fragen haben oder keine Beendigungsanforderung eingegangen ist
+    while (range && !exit) {
+        %*\bfseries\color{cyan}QAPair*) *qa = random_question(range, &current);  // wir w%*\color{green}ä*)hlen eine Frage aus
+        exit = ask_and_correct_question(qa);            // Frage stellen und Antwort korrigieren
+        swap_qas(current, --range);         // wir tauschen mit der letzte Element
+\end{lstlisting}
+\begin{lstlisting}
+        // Im Endloserlebnis, wenn keine Fragen mehr %*\color{green}ü*)brig sind, werden alle Fragen wieder in den Pool zur%*\color{green}ü*)ckgelegt
+        if ((gamemode == INFINITE || gamemode == INFINITE_REVERSED) && range == 0)
+            range = quiz->size;            
+    }
+
+    stop_timer();       // Uhr anhalten
+    
+    return;
+}
+\end{lstlisting}
+
+\subsection{\texttt{evaluation.c}}
+Verantwortlich für die Nachverfolgung und Bewertung der Benutzerleistung.
+
+\noindent Hier wird die Frage gestellt und die Antwort korrigiert:
+\begin{lstlisting}
+int ask_and_correct_question(QAPair *qa) {
+    char user_answer[ANSWER_SIZE];  // hier wird die Antwort eingelesen
+    char* question;         // das werden wir fragen
+    char* correct_answer;   // die richtige Antwort
+    int exit = 0;           // ob eine Beendigungsanforderung eingegangen ist
+
+    // Im umgekehrten Spielmodus vertauschen wir die Frage und die Antwort
+    if (gamemode == ONEROUNDER_REVERSED || gamemode == INFINITE_REVERSED) {
+        question = qa->answer;
+        correct_answer = qa->question;
+    }
+    else {
+        question = qa->question;
+        correct_answer = qa->answer;
+    }
+
+    // f%*\color{green}ü*)r die Ergebnisanzeige erforderlich (global)
+    asked_questions++;
+
+    // wir stellen die Frage und lesen die Antwort ein
+    print_message(INFO, "%s ", question);
+    fgets(user_answer, sizeof(user_answer), stdin);
+
+    // wir entfernen das Enter-Zeichen am Ende
+    user_answer[strcspn(user_answer, "\n")] = '\0';
+
+    // wir erfassen die Beendigungsanforderung
+    if (strcmp(user_answer, "!exit") == 0)
+        exit = 1;
+    // ob die Antwort richtig war
+    else if (strcmp(user_answer, correct_answer) == 0)
+        correct_answers++;
+    // wenn nicht, h%*\color{green}ä*)tte dies geschrieben werden sollen
+    else
+        print_message(INCORRECT, "%s", correct_answer);
+
+    // %*\color{green}ä*)sthetischer Zeilenumbruch
+    print_message(INFO, "");
+    
+    return exit;
+}
+\end{lstlisting}
+
+\end{document}
